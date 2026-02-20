@@ -3,358 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DA Roadmap 2026 - Ultimate Dashboard</title>
+    <title>DA Roadmap 2026 - AI Fixed Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #1E293B; }
-        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
-        .chart-container { position: relative; width: 100%; height: 320px; }
-        .gradient-text { background: linear-gradient(90deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .loading-shimmer { background: linear-gradient(90deg, #f0f4f8 25%, #d9e2ec 50%, #f0f4f8 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f2f5; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .shimmer { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="p-4 lg:p-8">
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <!-- TOP NAVIGATION & STATUS -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-            <div class="space-y-1 text-center md:text-left">
-                <h1 class="text-4xl font-black tracking-tight uppercase"><span class="gradient-text italic">Data Analyst</span> 2026</h1>
-                <p class="text-slate-500 font-medium">Hệ thống quản lý lộ trình & Trợ lý Mentor AI</p>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">ROADMAP DA <span class="text-blue-600">2026</span></h1>
+                <p class="text-slate-500 text-sm font-medium">Hành trình trở thành chuyên gia dữ liệu</p>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="bg-white shadow-sm border px-6 py-3 rounded-2xl flex flex-col items-center min-w-[120px]">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ</span>
-                    <span id="day-counter" class="text-3xl font-black text-blue-600 italic">0/100</span>
-                </div>
-                <div class="bg-blue-600 shadow-lg shadow-blue-200 text-white px-6 py-3 rounded-2xl flex flex-col items-center min-w-[120px]">
-                    <span class="text-[10px] font-bold text-blue-100 uppercase tracking-widest">Giai đoạn</span>
-                    <span id="phase-label" class="text-xl font-bold">Foundation</span>
-                </div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- LEFT COLUMN (8/12): ANALYTICS & AI TOOLS -->
-            <div class="lg:col-span-8 space-y-6">
-                
-                <!-- Skill Radar Chart Card -->
-                <div class="glass-card rounded-3xl p-8 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-black text-slate-800 uppercase flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                            </svg>
-                            Chỉ số năng lực thực chiến
-                        </h2>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="skillsRadarChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- AI Quick Support & Reflection -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Term Explainer -->
-                    <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col border-2 border-blue-50">
-                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            ✨ AI Giải thích nhanh
-                        </h3>
-                        <div class="flex flex-col gap-3">
-                            <input id="ai-query" type="text" placeholder="SQL Join là gì? p-value?..." class="w-full p-4 rounded-2xl border bg-slate-50 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none text-sm transition-all" onkeypress="if(event.key === 'Enter') askGemini()">
-                            <button onclick="askGemini()" id="btn-ask" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold hover:bg-black transition-all flex justify-center items-center gap-2">
-                                <span id="ask-btn-text">Hỏi Trợ Lý AI</span>
-                                <div id="ask-spinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            </button>
-                        </div>
-                        <div id="ai-response-container" class="hidden mt-4 space-y-2">
-                             <div class="text-[10px] font-bold text-blue-500 uppercase px-1">Kết quả từ Gemini:</div>
-                             <div id="ai-response" class="p-4 bg-blue-50 rounded-xl border border-blue-100 text-xs leading-relaxed text-blue-900 italic overflow-y-auto max-h-40"></div>
-                        </div>
-                    </div>
-
-                    <!-- Motivation / Reflection -->
-                    <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-slate-800 mb-4">Ghi chú & Động lực</h3>
-                            <textarea id="reflection-text" class="w-full bg-slate-50 border p-3 rounded-xl text-xs h-24 outline-none focus:bg-white transition-all" placeholder="Hôm nay bạn học được gì hay ho không?" oninput="saveState()"></textarea>
-                        </div>
-                        <div id="ai-motivation-box" class="mt-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-[11px] text-indigo-700 hidden">
-                            <!-- AI Motivation message -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT COLUMN (4/12): DAILY MISSION -->
-            <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card rounded-3xl p-8 shadow-lg border-blue-100 flex flex-col h-full sticky top-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h2 class="text-xl font-black text-slate-800 uppercase">Nhiệm vụ</h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Daily Challenges</p>
-                        </div>
-                        <button onclick="generateAiTasks()" id="btn-refresh" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-blue-600" title="AI Refresh Tasks">
-                            <svg id="refresh-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div id="checklist-container" class="space-y-4 flex-1">
-                        <!-- Tasks go here -->
-                    </div>
-
-                    <!-- Finish Section -->
-                    <div id="finish-area" class="mt-10 pt-6 border-t border-slate-100 hidden">
-                        <button onclick="finishDay()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all">
-                            CHỐT SỔ & +1 NGÀY
-                        </button>
-                    </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-3 px-5 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-[10px] block font-bold text-slate-400 uppercase">Tiến độ</span>
+                    <span id="day-display" class="text-xl font-extrabold text-blue-600 italic">0/100 Ngày</span>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- UI Feedback Modal -->
-    <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[40px] p-10 max-w-sm w-full text-center shadow-2xl transition-all transform scale-95 opacity-0 duration-300">
-            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">✓</div>
-            <h2 class="text-2xl font-black mb-2 uppercase">Xuất sắc!</h2>
-            <p id="modal-msg" class="text-slate-500 text-sm mb-8 italic"></p>
-            <button onclick="closeModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold">TIẾP TỤC HÀNH TRÌNH</button>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- LEFT: AI SETTINGS & Q&A -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- AI CONFIG CARD -->
+                <div class="glass rounded-[2rem] p-6 shadow-xl border-t-4 border-t-blue-500">
+                    <h2 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        🔑 Cấu hình Trợ lý AI
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                            <p class="text-[11px] text-blue-700 leading-relaxed">
+                                Để AI hoạt động trên GitHub, bạn cần dán <b>Gemini API Key</b> vào đây. Key được lưu trong trình duyệt của riêng bạn.
+                            </p>
+                        </div>
+                        <input id="api-key-input" type="password" placeholder="Dán API Key tại đây..." 
+                               class="w-full p-3 rounded-xl border bg-white focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all shadow-inner">
+                        <button onclick="saveApiKey()" class="w-full bg-slate-800 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-black transition-all">
+                            Lưu Key vào trình duyệt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUICK EXPLAINER -->
+                <div class="glass rounded-[2rem] p-6 shadow-lg border-2 border-slate-50">
+                    <h2 class="font-bold text-slate-800 mb-4 flex items-center gap-2">✨ Giải thích nhanh</h2>
+                    <input id="ai-query" type="text" placeholder="SQL Join là gì?..." 
+                           class="w-full p-4 rounded-2xl border bg-slate-50 focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none text-sm transition-all mb-3">
+                    <button id="btn-ask" onclick="askAi()" class="w-full bg-blue-600 text-white py-3.5 rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex justify-center items-center gap-2">
+                        <span id="btn-text">Hỏi Trợ Lý AI</span>
+                        <div id="loader" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    </button>
+                    
+                    <div id="res-box" class="hidden mt-6 p-4 bg-white rounded-2xl border border-blue-50 text-sm leading-relaxed text-slate-700 italic relative min-h-[60px]">
+                        <!-- AI Response content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: MAIN DASHBOARD -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- RADAR CHART -->
+                <div class="glass rounded-[2rem] p-8 shadow-sm h-[400px]">
+                    <h2 class="font-bold text-slate-800 mb-6 flex items-center gap-2">📊 Biểu đồ Năng lực</h2>
+                    <div class="relative h-[300px]">
+                        <canvas id="skillChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- TASK LIST -->
+                <div class="glass rounded-[2rem] p-8 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-bold text-slate-800 text-xl">Nhiệm vụ Ngày hôm nay</h2>
+                        <span class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-bold uppercase">Tự động tạo</span>
+                    </div>
+                    <div id="task-list" class="space-y-3">
+                        <!-- Tasks go here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // API CONFIG (Empty key for environment auto-fill)
-        const apiKey = ""; 
-        const modelName = "gemini-2.5-flash-preview-09-2025";
-
-        // STATE MANAGEMENT
-        let state = {
-            completedDays: parseInt(localStorage.getItem('da_days_v2')) || 0,
-            tasks: JSON.parse(localStorage.getItem('da_tasks_v2')) || [
+        // --- CORE LOGIC ---
+        let appState = {
+            apiKey: localStorage.getItem('GEMINI_API_KEY') || "",
+            days: parseInt(localStorage.getItem('DA_DAY')) || 1,
+            tasks: [
                 { id: 1, text: "Xây dựng tư duy SQL nâng cao", done: false },
                 { id: 2, text: "Thực hành Window Functions (LEAD/LAG)", done: false },
-                { id: 3, text: "Ghi lại Reflection học tập", done: false }
-            ],
-            reflection: localStorage.getItem('da_reflection_v2') || ""
+                { id: 3, text: "Lên ý tưởng cho Portfolio Project 1", done: false }
+            ]
         };
 
-        // 🤖 AI ENGINE WITH EXPONENTIAL BACKOFF
-        async function callGemini(prompt, isJson = false) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: isJson ? { responseMimeType: "application/json" } : {}
-            };
-
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (text) return text;
-                    }
-                } catch (e) { console.error(`Retry ${i+1} failed:`, e); }
-                
-                // Exponential backoff
-                await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key) {
+                appState.apiKey = key;
+                localStorage.setItem('GEMINI_API_KEY', key);
+                alert("Đã lưu API Key thành công! Giờ bạn có thể hỏi AI.");
             }
-            return null;
         }
 
-        // FEATURE: Generate AI Tasks
-        async function generateAiTasks() {
-            const icon = document.getElementById('refresh-icon');
-            const btn = document.getElementById('btn-refresh');
-            icon.classList.add('animate-spin');
-            btn.disabled = true;
-            
-            const prompt = `Bạn là mentor lộ trình Data Analyst chuyên nghiệp. Học viên đã xong ${state.completedDays} ngày. 
-            Hãy tạo 3 nhiệm vụ mới cho hôm nay. Nhiệm vụ cần thực tế, liên quan SQL/Excel/BI/Python. 
-            Trả về duy nhất một mảng JSON các chuỗi tiêu đề nhiệm vụ. 
-            Ví dụ: ["Làm bài tập Join trên HackerRank", "Tìm hiểu về CTEs trong SQL", "Vẽ biểu đồ Pareto trên Excel"]`;
+        async function askAi() {
+            const query = document.getElementById('ai-query').value.trim();
+            const btnText = document.getElementById('btn-text');
+            const loader = document.getElementById('loader');
+            const resBox = document.getElementById('res-box');
 
-            const res = await callGemini(prompt, true);
-            if (res) {
-                try {
-                    const titles = JSON.parse(res);
-                    state.tasks = titles.map((t, i) => ({ id: Date.now() + i, text: t, done: false }));
-                    saveState();
-                    render();
-                } catch(e) { console.error("JSON Parse Error", e); }
-            } else {
-                alert("AI Mentor đang bận, hãy thử lại sau vài giây!");
+            if (!appState.apiKey) {
+                alert("Vui lòng nhập và lưu API Key trước khi hỏi!");
+                return;
             }
-            icon.classList.remove('animate-spin');
-            btn.disabled = false;
-        }
-
-        // FEATURE: AI Explain Term
-        async function askGemini() {
-            const queryInput = document.getElementById('ai-query');
-            const query = queryInput.value.trim();
-            const resContainer = document.getElementById('ai-response-container');
-            const resDiv = document.getElementById('ai-response');
-            const btn = document.getElementById('btn-ask');
-            const spinner = document.getElementById('ask-spinner');
-            const btnText = document.getElementById('ask-btn-text');
-
             if (!query) return;
 
-            // UI Loading state
-            btn.disabled = true;
-            btnText.innerText = "Đang tra cứu...";
-            spinner.classList.remove('hidden');
-            resContainer.classList.remove('hidden');
-            resDiv.innerHTML = '<div class="h-4 w-full loading-shimmer rounded mb-2"></div><div class="h-4 w-3/4 loading-shimmer rounded"></div>';
+            // UI Loading
+            btnText.innerText = "Đang xử lý...";
+            loader.classList.remove('hidden');
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<div class="h-4 w-full shimmer rounded mb-2"></div><div class="h-4 w-2/3 shimmer rounded"></div>';
 
-            const prompt = `Bạn là một chuyên gia Data Science. Hãy giải thích ngắn gọn thuật ngữ "${query}" cho người mới bắt đầu trong tối đa 3 câu văn phong chuyên nghiệp nhưng dễ hiểu. Nêu rõ ứng dụng của nó trong công việc thực tế của một Data Analyst.`;
-            
-            const result = await callGemini(prompt);
-            
-            if (result) {
-                resDiv.innerText = result;
-            } else {
-                resDiv.innerHTML = '<span class="text-red-500 font-bold text-xs">⚠️ Lỗi kết nối API. Vui lòng kiểm tra lại mạng hoặc thử lại sau.</span>';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${appState.apiKey}`;
+            const prompt = `Giải thích ngắn gọn (dưới 50 từ) thuật ngữ: ${query}. Hãy tập trung vào cách nó được dùng trong ngành Data Analytics.`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                if (!response.ok) throw new Error("API Error");
+
+                const data = await response.json();
+                const text = data.candidates[0].content.parts[0].text;
+                resBox.innerText = text;
+
+            } catch (err) {
+                resBox.innerHTML = '<span class="text-red-500 font-bold">⚠️ Lỗi: API Key không đúng hoặc hết hạn. Hãy kiểm tra lại key của bạn.</span>';
+            } finally {
+                btnText.innerText = "Hỏi Trợ Lý AI";
+                loader.classList.add('hidden');
             }
-            
-            btn.disabled = false;
-            btnText.innerText = "Hỏi Trợ Lý AI";
-            spinner.classList.add('hidden');
         }
 
-        // UI CORE
-        function render() {
-            document.getElementById('day-counter').innerText = `${state.completedDays}/100`;
-            document.getElementById('phase-label').innerText = state.completedDays < 30 ? "Foundation" : state.completedDays < 70 ? "Advanced" : "Portfolio";
-            
-            const container = document.getElementById('checklist-container');
-            container.innerHTML = state.tasks.map(t => `
-                <div onclick="toggleTask(${t.id})" class="flex items-center gap-4 p-5 bg-white rounded-2xl border-2 transition-all cursor-pointer hover:shadow-md ${t.done ? 'bg-emerald-50 border-emerald-200 shadow-inner' : 'border-slate-100 shadow-sm'}">
-                    <div class="w-7 h-7 border-2 rounded-xl flex items-center justify-center transition-colors ${t.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-200'}">
-                        ${t.done ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+        // --- RENDER LOGIC ---
+        function renderTasks() {
+            const container = document.getElementById('task-list');
+            container.innerHTML = appState.tasks.map(t => `
+                <div onclick="toggleTask(${t.id})" class="flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${t.done ? 'bg-emerald-50 border-emerald-100 opacity-60' : 'bg-white border-slate-100 hover:border-blue-200'}">
+                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${t.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300'}">
+                        ${t.done ? '✓' : ''}
                     </div>
-                    <span class="text-sm font-bold ${t.done ? 'line-through text-slate-400' : 'text-slate-700'}">${t.text}</span>
+                    <span class="text-sm font-semibold ${t.done ? 'line-through text-slate-400' : 'text-slate-700'}">${t.text}</span>
                 </div>
             `).join('');
-
-            const allDone = state.tasks.length > 0 && state.tasks.every(t => t.done);
-            document.getElementById('finish-area').classList.toggle('hidden', !allDone);
-            if (allDone) getAiMotivation();
-        }
-
-        async function getAiMotivation() {
-            const box = document.getElementById('ai-motivation-box');
-            if (box.innerText) return;
-            box.classList.remove('hidden');
-            box.innerHTML = '✨ AI Mentor đang soạn lời chúc...';
-            const msg = await callGemini(`Tôi đã xong tất cả nhiệm vụ ngày thứ ${state.completedDays}. Viết một câu khích lệ cực ngắn (dưới 15 chữ) để tiếp thêm năng lượng cho tôi.`);
-            box.innerText = msg ? `AI Mentor: "${msg}"` : "Chúc mừng bạn đã hoàn thành ngày hôm nay!";
+            document.getElementById('day-display').innerText = `${appState.days}/100 Ngày`;
         }
 
         function toggleTask(id) {
-            const task = state.tasks.find(t => t.id === id);
+            const task = appState.tasks.find(t => t.id === id);
             task.done = !task.done;
-            saveState();
-            render();
+            renderTasks();
         }
 
-        function finishDay() {
-            state.completedDays++;
-            document.getElementById('ai-motivation-box').innerText = "";
-            document.getElementById('ai-motivation-box').classList.add('hidden');
-            
-            saveState();
-            updateChart();
-            render();
-            
-            showModal(`Bạn đã hoàn thành Ngày ${state.completedDays}. AI sẽ cập nhật thử thách mới ngay khi bạn sẵn sàng!`);
-            generateAiTasks();
-        }
-
-        function saveState() {
-            localStorage.setItem('da_days_v2', state.completedDays);
-            localStorage.setItem('da_tasks_v2', JSON.stringify(state.tasks));
-            localStorage.setItem('da_reflection_v2', document.getElementById('reflection-text').value);
-        }
-
-        let myChart;
-        function updateChart() {
-            const day = state.completedDays;
-            const data = [
-                Math.min(100, day * 2.2 + 15),
-                Math.min(100, day * 1.8 + 10),
-                Math.min(100, day * 1.5 + 5),
-                Math.min(100, day * 1.2),
-                Math.min(100, day * 0.9 + 20)
-            ];
-
-            if (myChart) {
-                myChart.data.datasets[0].data = data;
-                myChart.update();
-            } else {
-                const ctx = document.getElementById('skillsRadarChart').getContext('2d');
-                myChart = new Chart(ctx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['SQL Master', 'Excel Pro', 'BI Viz', 'Python', 'Business Sense'],
-                        datasets: [{
-                            label: 'Level Skills',
-                            data: data,
-                            backgroundColor: 'rgba(37, 99, 235, 0.15)',
-                            borderColor: '#2563eb',
-                            borderWidth: 4,
-                            pointBackgroundColor: '#1e40af',
-                            pointBorderColor: '#fff',
-                            pointRadius: 4
-                        }]
-                    },
-                    options: {
-                        scales: { r: { beginAtZero: true, max: 100, grid: { color: '#e2e8f0' }, angleLines: { color: '#e2e8f0' }, ticks: { display: false } } },
-                        plugins: { legend: { display: false } },
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-        }
-
-        function showModal(msg) {
-            const modal = document.getElementById('success-modal');
-            const box = modal.querySelector('div');
-            document.getElementById('modal-msg').innerText = msg;
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                box.classList.remove('scale-95', 'opacity-0');
-                box.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-        
-        function closeModal() {
-            const modal = document.getElementById('success-modal');
-            const box = modal.querySelector('div');
-            box.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 300);
+        let chart;
+        function initChart() {
+            const ctx = document.getElementById('skillChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['SQL', 'Python', 'Excel', 'BI Tools', 'Statistics'],
+                    datasets: [{
+                        data: [65, 40, 80, 55, 30],
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderColor: '#2563eb',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1d4ed8'
+                    }]
+                },
+                options: {
+                    scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+                    plugins: { legend: { display: false } },
+                    maintainAspectRatio: false
+                }
+            });
         }
 
         window.onload = () => {
-            document.getElementById('reflection-text').value = state.reflection;
-            render();
-            updateChart();
+            if (appState.apiKey) document.getElementById('api-key-input').value = "************";
+            renderTasks();
+            initChart();
         };
     </script>
 </body>
