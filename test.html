@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lộ Trình Thực Tập Data Analyst 2026 - AI Evolution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; color: #1F2937; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 350px; }
+        .check-item { transition: all 0.2s; border-left: 4px solid transparent; }
+        .check-item.completed { border-left-color: #10B981; background-color: #F0FDF4; }
+        .ai-glow { animation: glow 2s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 5px #3b82f6; } to { box-shadow: 0 0 20px #8b5cf6; } }
+        .tab-btn.active { border-bottom: 2px solid #3B82F6; color: #3B82F6; }
+        .loading-dots:after { content: ' .'; animation: dots 1.5s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); } 40% { color: #3b82f6; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); } 60% { text-shadow: .25em 0 0 #3b82f6, .5em 0 0 rgba(0,0,0,0); } 80%, 100% { text-shadow: .25em 0 0 #3b82f6, .5em 0 0 #3b82f6; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-900">Roadmap DA 2026 ✨ AI Evolution</h1>
+                <p class="text-sm text-gray-500 hidden sm:block">Trợ lý học tập thông minh tích hợp Gemini</p>
+            </div>
+            <div class="text-right">
+                <span id="current-date-display" class="block text-xs text-gray-400 font-semibold uppercase"></span>
+                <span id="day-counter" class="text-lg font-bold text-blue-600 italic">Day 0 / 100</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- AI COMMAND CENTER -->
+        <section class="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-6 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        AI Command Center ✨
+                    </h2>
+                    <p class="text-blue-100 text-sm opacity-90">Tối ưu hóa hành trình dựa trên nỗ lực của bạn.</p>
+                </div>
+                <div id="ai-loading-indicator" class="hidden text-sm bg-white/20 px-4 py-2 rounded-full font-medium animate-pulse">
+                    ✨ AI đang suy nghĩ<span class="loading-dots"></span>
+                </div>
+            </div>
+            
+            <div class="flex border-b overflow-x-auto text-sm font-medium">
+                <button onclick="switchAiTab('roadmap')" id="tab-roadmap" class="tab-btn active px-6 py-4 whitespace-nowrap">✨ Cá Nhân Hóa Lộ Trình</button>
+                <button onclick="switchAiTab('quiz')" id="tab-quiz" class="tab-btn px-6 py-4 whitespace-nowrap">✨ Quiz Ôn Tập</button>
+                <button onclick="switchAiTab('debug')" id="tab-debug" class="tab-btn px-6 py-4 whitespace-nowrap">✨ Sửa Lỗi Code</button>
+                <button onclick="switchAiTab('summarize')" id="tab-summarize" class="tab-btn px-6 py-4 whitespace-nowrap">✨ Tóm Tắt & Audio</button>
+            </div>
+
+            <div class="p-6">
+                <!-- Roadmap Tab -->
+                <div id="ai-content-roadmap" class="ai-tab-content">
+                    <p class="text-xs text-gray-500 mb-2 uppercase font-bold">Mục tiêu học tập của bạn hôm nay là gì?</p>
+                    <div class="flex gap-2">
+                        <input id="ai-roadmap-input" type="text" placeholder="VD: Học SQL Join nâng cao và giải bài tập LeetCode..." class="flex-1 border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none">
+                        <button onclick="handleAiAction('roadmap')" class="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-all">✨ Tạo Checklist</button>
+                    </div>
+                </div>
+
+                <!-- Quiz Tab -->
+                <div id="ai-content-quiz" class="ai-tab-content hidden">
+                    <p class="text-xs text-gray-500 mb-2 uppercase font-bold">Kiểm tra kiến thức về:</p>
+                    <div class="flex gap-2">
+                        <select id="ai-quiz-topic" class="flex-1 border rounded-xl p-3 text-sm">
+                            <option value="SQL Aggregation Functions">Hàm gộp SQL (Group By, Having)</option>
+                            <option value="Data Cleaning with Pandas">Làm sạch dữ liệu với Pandas</option>
+                            <option value="Probability for DA">Xác suất thống kê cho DA</option>
+                        </select>
+                        <button onclick="handleAiAction('quiz')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-indigo-700">✨ Tạo Quiz Nhanh</button>
+                    </div>
+                </div>
+
+                <!-- Debug Tab -->
+                <div id="ai-content-debug" class="ai-tab-content hidden">
+                    <textarea id="ai-debug-input" rows="3" class="w-full border rounded-xl p-3 text-sm font-mono bg-gray-50 mb-3" placeholder="Dán code gặp lỗi vào đây..."></textarea>
+                    <button onclick="handleAiAction('debug')" class="bg-red-500 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-red-600">✨ Debug Code</button>
+                </div>
+
+                <!-- Summarize Tab -->
+                <div id="ai-content-summarize" class="ai-tab-content hidden">
+                    <textarea id="ai-summarize-input" rows="3" class="w-full border rounded-xl p-3 text-sm mb-3" placeholder="Dán nội dung tài liệu..."></textarea>
+                    <div class="flex gap-2">
+                        <button onclick="handleAiAction('summarize')" class="bg-emerald-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-emerald-700">✨ Tóm tắt ý chính</button>
+                        <button onclick="speakText()" class="bg-gray-800 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-black flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M11 5a1 1 0 011 1v8a1 1 0 11-2 0V6a1 1 0 011-1zM14 7a1 1 0 011 1v4a1 1 0 11-2 0V8a1 1 0 011-1zM17 9a1 1 0 011 1v2a1 1 0 11-2 0V10a1 1 0 011-1zM7 5a1 1 0 01.196.019l5.19 1.154a1 1 0 01.785.976v5.702a1 1 0 01-.784.976l-5.19 1.154A1 1 0 016 14V6a1 1 0 011-1z"/></svg>
+                            ✨ Nghe Giải Thích
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD GRID -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Thống Kê Kỹ Năng</h2>
+                <div class="chart-container"><canvas id="skillsRadarChart"></canvas></div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- GMAIL INTEGRATION -->
+                <div class="bg-white rounded-xl shadow-sm border border-red-100 p-6">
+                    <h3 class="font-bold text-red-600 flex items-center gap-2 mb-4 italic">
+                        📩 Gmail Sync
+                    </h3>
+                    <input type="email" id="user-email" placeholder="email-cua-ban@gmail.com" class="w-full px-3 py-2 border rounded-lg text-sm mb-3">
+                    <button onclick="sendRealEmail()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg text-xs font-bold transition-all shadow-md">🚀 Gửi báo cáo ✨ Gemini</button>
+                </div>
+
+                <!-- STREAK -->
+                <div class="bg-indigo-900 rounded-xl p-6 text-white ai-glow relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h4 class="text-sm font-bold opacity-70 uppercase mb-2">Days Completed</h4>
+                        <p id="streak-display" class="text-3xl font-black italic">0 DAYS</p>
+                    </div>
+                    <svg class="absolute right-[-10%] bottom-[-10%] w-32 h-32 opacity-10 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHECKLIST -->
+        <section>
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Nhiệm Vụ Hôm Nay</h2>
+                    <p id="task-source-label" class="text-xs text-blue-600 font-bold uppercase tracking-wider">Hoàn thành tất cả để được tính +1 Ngày</p>
+                </div>
+                <div class="text-xl font-black text-blue-600" id="progress-text">0%</div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-8 overflow-hidden">
+                <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-emerald-500 h-3 rounded-full transition-all duration-700" style="width: 0%"></div>
+            </div>
+            <div id="daily-checklist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            
+            <!-- Finish Day Button -->
+            <div id="finish-day-container" class="mt-8 hidden flex justify-center">
+                <button onclick="finishDay()" class="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-emerald-700 shadow-xl transition-all flex items-center gap-3 animate-bounce">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    CHỐT SỔ & +1 NGÀY TIẾN ĐỘ!
+                </button>
+            </div>
+        </section>
+
+        <!-- WEEKLY REFLECTION -->
+        <section class="bg-white rounded-xl shadow-sm border border-purple-100 p-6 mt-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Nhật Ký Học Tập (Reflection)
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chia sẻ Insight lớn nhất sau ngày học này:</label>
+                    <textarea id="weekly-reflection-input" rows="4" class="w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400 outline-none bg-gray-50" placeholder="Hôm nay mình ngộ ra là..."></textarea>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="saveReflection()" class="bg-purple-600 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-purple-700 transition-all shadow-md">💾 Lưu Nhật Ký</button>
+                    <span id="reflection-status" class="text-sm text-emerald-600 font-bold hidden transition-all">✨ Đã lưu!</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- AI OUTPUT MODAL -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-0 shadow-2xl overflow-hidden">
+            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+                <span id="modal-title" class="font-bold flex items-center gap-2">✨ Gemini AI Mentor</span>
+                <button onclick="closeModal()" class="hover:bg-white/20 p-1 rounded-full">✕</button>
+            </div>
+            <div class="p-8 max-h-[70vh] overflow-y-auto">
+                <div id="ai-modal-content" class="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t flex justify-end">
+                <button onclick="closeModal()" class="bg-blue-600 text-white px-8 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+        const modelName = "gemini-2.5-flash-preview-09-2025";
+        const ttsModel = "gemini-2.5-flash-preview-tts";
+
+        // LocalStorage Keys
+        const STORAGE_TASKS = 'da_tasks_effort';
+        const STORAGE_DAYS = 'da_completed_days';
+        const STORAGE_REF = 'da_reflection_effort';
+
+        let completedDays = parseInt(localStorage.getItem(STORAGE_DAYS)) || 0;
+        const defaultTasks = [
+            { id: 't1', title: "Giải 1 bài SQL Medium", completed: false },
+            { id: 't2', title: "Học 30p Window Functions", completed: false },
+            { id: 't3', title: "Tóm tắt 1 bài blog ngành DA", completed: false }
+        ];
+        let currentTasks = JSON.parse(localStorage.getItem(STORAGE_TASKS)) || defaultTasks;
+
+        let myChart;
+
+        function saveState() {
+            localStorage.setItem(STORAGE_TASKS, JSON.stringify(currentTasks));
+            localStorage.setItem(STORAGE_DAYS, completedDays);
+        }
+
+        function switchAiTab(tabId) {
+            document.querySelectorAll('.ai-tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`ai-content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        async function callGemini(prompt, systemPrompt = "", isJson = false) {
+            document.getElementById('ai-loading-indicator').classList.remove('hidden');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: isJson ? { responseMimeType: "application/json" } : {}
+            };
+            try {
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await response.json();
+                document.getElementById('ai-loading-indicator').classList.add('hidden');
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
+            } catch (err) {
+                document.getElementById('ai-loading-indicator').classList.add('hidden');
+                return "Lỗi kết nối AI.";
+            }
+        }
+
+        async function speakText() {
+            const text = document.getElementById('ai-summarize-input').value;
+            if (!text) return alert("Dán văn bản trước!");
+            showModal("✨ AI đang tạo audio...");
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${ttsModel}:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: `Explain like a mentor: ${text}` }] }],
+                generationConfig: { 
+                    responseModalities: ["AUDIO"],
+                    speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+                }
+            };
+            try {
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const result = await response.json();
+                const audioData = result.candidates[0].content.parts[0].inlineData.data;
+                const blob = b64toBlob(audioData, "audio/wav");
+                new Audio(URL.createObjectURL(blob)).play();
+                document.getElementById('ai-modal-content').innerText = "🔊 Đang phát giải thích...";
+            } catch (err) {
+                showModal("Lỗi phát audio.");
+            }
+        }
+
+        function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) { byteNumbers[i] = slice.charCodeAt(i); }
+                byteArrays.push(new Uint8Array(byteNumbers));
+            }
+            return new Blob(byteArrays, { type: contentType });
+        }
+
+        async function handleAiAction(type) {
+            if (type === 'roadmap') {
+                const goal = document.getElementById('ai-roadmap-input').value;
+                const prompt = `Goal: "${goal}". Create 5 short tasks for today. Return JSON array of objects with "title".`;
+                const res = await callGemini(prompt, "Return only JSON.", true);
+                try {
+                    const tasks = JSON.parse(res);
+                    currentTasks = tasks.map((t, i) => ({ id: `ai-${Date.now()}-${i}`, title: t.title, completed: false }));
+                    saveState();
+                    renderChecklist();
+                } catch (e) { showModal("Lỗi xử lý."); }
+            } else if (type === 'quiz') {
+                const res = await callGemini(`Tạo quiz về ${document.getElementById('ai-quiz-topic').value}.`, "Mentor mode.");
+                showModal(res);
+            } else if (type === 'debug') {
+                const res = await callGemini(`Debug: ${document.getElementById('ai-debug-input').value}`, "Mentor mode.");
+                showModal(res);
+            } else if (type === 'summarize') {
+                const res = await callGemini(`Tóm tắt: ${document.getElementById('ai-summarize-input').value}`, "Mentor mode.");
+                showModal(res);
+            }
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('daily-checklist-grid');
+            container.innerHTML = currentTasks.map((task) => `
+                <div onclick="toggleTask('${task.id}')" class="check-item group bg-white p-4 rounded-xl border border-gray-200 cursor-pointer ${task.completed ? 'completed' : ''}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-6 h-6 border-2 rounded flex items-center justify-center ${task.completed ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300'}">
+                            ${task.completed ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                        </div>
+                        <span class="font-medium text-sm ${task.completed ? 'line-through text-gray-400' : 'text-gray-700'}">${task.title}</span>
+                    </div>
+                </div>
+            `).join('');
+            updateProgress();
+        }
+
+        function toggleTask(id) {
+            const task = currentTasks.find(t => t.id === id);
+            if (task) { 
+                task.completed = !task.completed; 
+                saveState();
+                renderChecklist(); 
+            }
+        }
+
+        function updateProgress() {
+            const done = currentTasks.filter(t => t.completed).length;
+            const total = currentTasks.length;
+            const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+            document.getElementById('progress-bar').style.width = pct + '%';
+            document.getElementById('progress-text').innerText = pct + '%';
+
+            // Hiện nút Chốt Sổ nếu đã xong 100%
+            const finishBtn = document.getElementById('finish-day-container');
+            if (pct === 100 && total > 0) {
+                finishBtn.classList.remove('hidden');
+            } else {
+                finishBtn.classList.add('hidden');
+            }
+        }
+
+        function finishDay() {
+            completedDays += 1;
+            // Reset tasks cho ngày mới (trở về mặc định hoặc chờ AI sinh mới)
+            currentTasks = [...defaultTasks]; 
+            saveState();
+            
+            // Cập nhật UI
+            document.getElementById('day-counter').innerText = `Day ${completedDays} / 100`;
+            document.getElementById('streak-display').innerText = `${completedDays} DAYS`;
+            
+            // Cập nhật Chart
+            updateChart();
+            renderChecklist();
+            
+            showModal(`🎉 Chúc mừng! Bạn đã hoàn thành Ngày thứ ${completedDays}. Kỹ năng của bạn vừa được nâng cấp!`);
+        }
+
+        function saveReflection() {
+            localStorage.setItem(STORAGE_REF, document.getElementById('weekly-reflection-input').value);
+            const status = document.getElementById('reflection-status');
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+        }
+
+        function updateChart() {
+            const sql = Math.min(100, Math.round(completedDays * 1.5 + 5));
+            const excel = Math.min(100, Math.round(completedDays * 1.2 + 10));
+            const bi = Math.min(100, Math.round(completedDays * 1.0));
+            const py = Math.min(100, Math.round(completedDays * 0.8));
+            const biz = Math.min(100, Math.round(completedDays * 0.9 + 15));
+
+            myChart.data.datasets[0].data = [sql, excel, bi, py, biz];
+            myChart.data.datasets[0].label = `Kỹ năng (Cấp độ ${completedDays})`;
+            myChart.update();
+        }
+
+        function showModal(text) {
+            document.getElementById('ai-modal').classList.remove('hidden');
+            document.getElementById('ai-modal-content').innerText = text;
+        }
+
+        function closeModal() { document.getElementById('ai-modal').classList.add('hidden'); }
+
+        window.onload = () => {
+            document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('vi-VN');
+            document.getElementById('day-counter').innerText = `Day ${completedDays} / 100`;
+            document.getElementById('streak-display').innerText = `${completedDays} DAYS`;
+            document.getElementById('weekly-reflection-input').value = localStorage.getItem(STORAGE_REF) || '';
+            
+            renderChecklist();
+
+            const ctx = document.getElementById('skillsRadarChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['SQL', 'Excel', 'Power BI', 'Python', 'Business'],
+                    datasets: [{ 
+                        label: `Kỹ năng (Cấp độ ${completedDays})`, 
+                        data: [0,0,0,0,0], 
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', 
+                        borderColor: '#3B82F6', 
+                        pointBackgroundColor: '#3B82F6' 
+                    }]
+                },
+                options: { maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 100, ticks: { display: false } } } }
+            });
+            updateChart();
+        };
+    </script>
+</body>
+</html>
