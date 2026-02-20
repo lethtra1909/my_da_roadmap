@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DA Roadmap 2026 - Ultimate Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .chart-container { position: relative; width: 100%; height: 320px; }
+        .loading-dots: { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
+        .gradient-text { background: linear-gradient(90deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>after
+<body class="p-4 lg:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- TOP NAVIGATION & STATUS -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+            <div class="space-y-1 text-center md:text-left">
+                <h1 class="text-4xl font-black tracking-tight uppercase"><span class="gradient-text italic">Data Analyst</span> 2026</h1>
+                <p class="text-slate-500 font-medium">Hệ thống quản lý lộ trình & Trợ lý Mentor AI</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-white shadow-sm border px-6 py-3 rounded-2xl flex flex-col items-center min-w-[120px]">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ</span>
+                    <span id="day-counter" class="text-3xl font-black text-blue-600 italic">0/100</span>
+                </div>
+                <div class="bg-blue-600 shadow-lg shadow-blue-200 text-white px-6 py-3 rounded-2xl flex flex-col items-center min-w-[120px]">
+                    <span class="text-[10px] font-bold text-blue-100 uppercase tracking-widest">Giai đoạn</span>
+                    <span id="phase-label" class="text-xl font-bold">Foundation</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT COLUMN (8/12): ANALYTICS & AI TOOLS -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Skill Radar Chart Card -->
+                <div class="glass-card rounded-3xl p-8 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-black text-slate-800 uppercase flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                            </svg>
+                            Chỉ số năng lực thực chiến
+                        </h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="skillsRadarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- AI Quick Support & Reflection -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Term Explainer -->
+                    <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            ✨ AI Giải thích nhanh
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <input id="ai-query" type="text" placeholder="SQL Join là gì? p-value?..." class="w-full p-4 rounded-2xl border bg-slate-50 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none text-sm transition-all">
+                            <button onclick="askGemini()" id="btn-ask" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-bold hover:bg-black transition-all">Hỏi Trợ Lý AI</button>
+                        </div>
+                        <div id="ai-response" class="hidden mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-xs leading-relaxed text-blue-800 italic overflow-y-auto max-h-32">
+                        </div>
+                    </div>
+
+                    <!-- Motivation / Reflection -->
+                    <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-4">Ghi chú & Động lực</h3>
+                            <textarea id="reflection-text" class="w-full bg-slate-50 border p-3 rounded-xl text-xs h-24 outline-none focus:bg-white transition-all" placeholder="Hôm nay bạn học được gì hay ho không?"></textarea>
+                        </div>
+                        <div id="ai-motivation-box" class="mt-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-[11px] text-indigo-700 hidden">
+                            <!-- AI Motivation message -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN (4/12): DAILY MISSION -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="glass-card rounded-3xl p-8 shadow-lg border-blue-100 flex flex-col h-full sticky top-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h2 class="text-xl font-black text-slate-800 uppercase">Nhiệm vụ</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Daily Challenges</p>
+                        </div>
+                        <button onclick="generateAiTasks()" id="btn-refresh" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-blue-600" title="AI Refresh Tasks">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="checklist-container" class="space-y-4 flex-1">
+                        <!-- Tasks go here -->
+                    </div>
+
+                    <!-- Finish Section -->
+                    <div id="finish-area" class="mt-10 pt-6 border-t border-slate-100 hidden">
+                        <button onclick="finishDay()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 hover:scale-[1.02] active:scale-95 transition-all">
+                            CHỐT SỔ & +1 NGÀY
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Feedback Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[40px] p-10 max-w-sm w-full text-center shadow-2xl scale-90 transition-transform">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">✓</div>
+            <h2 class="text-2xl font-black mb-2">XUẤT SẮC!</h2>
+            <p id="modal-msg" class="text-slate-500 text-sm mb-8 italic"></p>
+            <button onclick="closeModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold">TIẾP TỤC HÀNH TRÌNH</button>
+        </div>
+    </div>
+
+    <script>
+        // API CONFIG
+        const apiKey = ""; 
+        const modelName = "gemini-2.5-flash-preview-09-2025";
+
+        // STATE MANAGEMENT
+        let state = {
+            completedDays: parseInt(localStorage.getItem('da_days_v2')) || 0,
+            tasks: JSON.parse(localStorage.getItem('da_tasks_v2')) || [
+                { id: 1, text: "Xây dựng tư duy SQL nâng cao", done: false },
+                { id: 2, text: "Thực hành Window Functions (LEAD/LAG)", done: false },
+                { id: 3, text: "Ghi lại Reflection học tập", done: false }
+            ],
+            reflection: localStorage.getItem('da_reflection_v2') || ""
+        };
+
+        // 🤖 AI ENGINE
+        async function callGemini(prompt, isJson = false) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: isJson ? { responseMimeType: "application/json" } : {}
+            };
+
+            try {
+                for (let i = 0; i < 5; i++) {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    }
+                    await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                }
+            } catch (e) { console.error("Gemini Error:", e); }
+            return null;
+        }
+
+        // FEATURE: Generate AI Tasks
+        async function generateAiTasks() {
+            const btn = document.getElementById('btn-refresh');
+            btn.classList.add('animate-spin');
+            
+            const prompt = `Bạn là mentor lộ trình Data Analyst. Học viên đã xong ${state.completedDays} ngày. 
+            Hãy tạo 3 nhiệm vụ mới cho hôm nay. Nhiệm vụ cần thực tế, liên quan SQL/Excel/BI/Python. 
+            Trả về duy nhất JSON mảng chuỗi. VD: ["Học A", "Làm B", "Sửa C"]`;
+
+            const res = await callGemini(prompt, true);
+            if (res) {
+                try {
+                    const titles = JSON.parse(res);
+                    state.tasks = titles.map((t, i) => ({ id: Date.now() + i, text: t, done: false }));
+                    saveState();
+                    render();
+                } catch(e) {}
+            }
+            btn.classList.remove('animate-spin');
+        }
+
+        // FEATURE: AI Explain Term
+        async function askGemini() {
+            const query = document.getElementById('ai-query').value;
+            const resDiv = document.getElementById('ai-response');
+            const btn = document.getElementById('btn-ask');
+            if (!query) return;
+
+            btn.disabled = true;
+            btn.innerText = "Đang xử lý...";
+            resDiv.classList.remove('hidden');
+            resDiv.innerText = "✨ Đang kết nối Mentor AI...";
+
+            const prompt = `Giải thích ngắn gọn thuật ngữ "${query}" cho người mới học Data Analyst trong tối đa 3 câu văn phong dễ hiểu, tập trung vào ứng dụng thực tế.`;
+            const result = await callGemini(prompt);
+            
+            resDiv.innerText = result || "Không thể kết nối AI. Hãy thử lại.";
+            btn.disabled = false;
+            btn.innerText = "Hỏi Trợ Lý AI";
+        }
+
+        // UI CORE
+        function render() {
+            // Update Stats
+            document.getElementById('day-counter').innerText = `${state.completedDays}/100`;
+            document.getElementById('phase-label').innerText = state.completedDays < 30 ? "Foundation" : state.completedDays < 70 ? "Advanced" : "Portfolio";
+            
+            // Render Tasks
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = state.tasks.map(t => `
+                <div onclick="toggleTask(${t.id})" class="flex items-center gap-4 p-5 bg-white rounded-2xl border-2 transition-all cursor-pointer hover:shadow-md ${t.done ? 'bg-emerald-50 border-emerald-200 shadow-inner' : 'border-slate-100 shadow-sm'}">
+                    <div class="w-7 h-7 border-2 rounded-xl flex items-center justify-center transition-colors ${t.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-200'}">
+                        ${t.done ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    </div>
+                    <span class="text-sm font-bold ${t.done ? 'line-through text-slate-400' : 'text-slate-700'}">${t.text}</span>
+                </div>
+            `).join('');
+
+            // Show Finish Btn
+            const allDone = state.tasks.length > 0 && state.tasks.every(t => t.done);
+            document.getElementById('finish-area').classList.toggle('hidden', !allDone);
+            if (allDone) getAiMotivation();
+        }
+
+        async function getAiMotivation() {
+            const box = document.getElementById('ai-motivation-box');
+            if (box.innerText) return;
+            box.classList.remove('hidden');
+            box.innerText = "✨ AI Mentor đang viết lời chúc cho bạn...";
+            const msg = await callGemini(`Tôi đã xong ngày thứ ${state.completedDays}. Viết 1 câu khích lệ cực ngắn (dưới 15 chữ) để tôi chốt sổ.`);
+            box.innerText = `AI Mentor: "${msg || 'Cố gắng lên, bạn đang làm rất tốt!'}"`;
+        }
+
+        function toggleTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            task.done = !task.done;
+            saveState();
+            render();
+        }
+
+        function finishDay() {
+            state.completedDays++;
+            document.getElementById('ai-motivation-box').innerText = "";
+            document.getElementById('ai-motivation-box').classList.add('hidden');
+            
+            // Auto generate for tomorrow
+            generateAiTasks();
+            saveState();
+            updateChart();
+            render();
+            
+            showModal(`Bạn đã chính thức chạm mốc Ngày thứ ${state.completedDays}. Đừng dừng lại nhé!`);
+        }
+
+        function saveState() {
+            localStorage.setItem('da_days_v2', state.completedDays);
+            localStorage.setItem('da_tasks_v2', JSON.stringify(state.tasks));
+            localStorage.setItem('da_reflection_v2', document.getElementById('reflection-text').value);
+        }
+
+        // CHART SYSTEM
+        let myChart;
+        function updateChart() {
+            const day = state.completedDays;
+            const data = [
+                Math.min(100, day * 2.2 + 15), // SQL
+                Math.min(100, day * 1.8 + 10), // Excel
+                Math.min(100, day * 1.5 + 5),  // Power BI
+                Math.min(100, day * 1.2),      // Python
+                Math.min(100, day * 0.9 + 20)  // Business
+            ];
+
+            if (myChart) {
+                myChart.data.datasets[0].data = data;
+                myChart.update();
+            } else {
+                const ctx = document.getElementById('skillsRadarChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['SQL Master', 'Excel Pro', 'BI Viz', 'Python', 'Business Sense'],
+                        datasets: [{
+                            label: 'Level Skills',
+                            data: data,
+                            backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                            borderColor: '#2563eb',
+                            borderWidth: 4,
+                            pointBackgroundColor: '#1e40af',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        scales: { r: { beginAtZero: true, max: 100, grid: { color: '#e2e8f0' }, angleLines: { color: '#e2e8f0' }, ticks: { display: false } } },
+                        plugins: { legend: { display: false } },
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+        }
+
+        function showModal(msg) {
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('success-modal').classList.remove('hidden');
+            setTimeout(() => { document.querySelector('#success-modal > div').classList.remove('scale-90'); }, 10);
+        }
+        function closeModal() { document.getElementById('success-modal').classList.add('hidden'); }
+
+        // INITIALIZE
+        window.onload = () => {
+            document.getElementById('reflection-text').value = state.reflection;
+            render();
+            updateChart();
+        };
+    </script>
+</body>
+</html>
